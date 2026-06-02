@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "attendance/wsgi.py",
+      "src": "attendance/attendance/wsgi.py",
       "config": { "maxLambdaSize": "15mb" },
       "use": "@vercel/python"
     },
@@ -19,7 +19,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "attendance/wsgi.py"
+      "dest": "attendance/attendance/wsgi.py"
     }
   ]
 }
