@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NWWDA FieldGuard{% endblock %}</title>
+    <style>
+        /* Theme Design Variables System Matrix */
+        :root[data-theme="dark"] {
+            --bg: #0b0f19;
+            --surface: rgba(20, 26, 43, 0.6);
+            --border: rgba(255, 255, 255, 0.06);
+            --primary: #0ea5e9;
+            --primary-glow: rgba(14, 165, 233, 0.15);
+            --success: #10b981;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #64748b;
+            --input-bg: #0d1222;
+            --panel-shadow: rgba(0, 0, 0, 0.4);
+            --card-hover-bg: rgba(0, 0, 0, 0.25);
+        }
+
+        :root[data-theme="light"] {
+            --bg: #f1f5f9;
+            --surface: rgba(255, 255, 255, 0.85);
+            --border: rgba(15, 23, 42, 0.08);
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.1);
+            --success: #16a34a;
+            --danger: #dc2626;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --input-bg: #ffffff;
+            --panel-shadow: rgba(148, 163, 184, 0.12);
+            --card-hover-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            /* Smoothly animates colors when switching modes */
+            transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        color 0.2s ease;
+        }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient lighting variations */
+        body::before {
+            content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, rgba(0,0,0,0) 70%);
+            top: -10%; right: -10%; z-index: -1;
+        }
+
+        /* Responsive Navbar Module */
+        .navbar {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            text-transform: uppercase;
+        }
+
+        .nav-brand span { color: var(--primary); }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme Toggle Trigger Mechanism */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        /* Icon Visibility Configuration logic depending on theme */
+        :root[data-theme="dark"] .sun-icon { display: block; }
+        :root[data-theme="dark"] .moon-icon { display: none; }
+        :root[data-theme="light"] .sun-icon { display: none; }
+        :root[data-theme="light"] .moon-icon { display: block; }
+
+        .main-wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        footer {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-top: auto;
+            z-index: 10;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-left { display: flex; align-items: center; gap: 1.5rem; }
+        .footer-right { display: flex; align-items: center; gap: 1rem; }
+
+        .agency-brand { color: var(--text); font-weight: 600; }
+        
+        .telemetry-status { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            background: rgba(16, 185, 129, 0.06); 
+            border: 1px solid var(--border); 
+            padding: 0.35rem 0.75rem; 
+            border-radius: 8px; 
+            color: var(--success); 
+            font-weight: 500; 
+        }
+        
+        .pulse-dot { width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; animation: pulse 2s infinite; }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @media (max-width: 768px) {
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-left { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">NWWDA <span>FieldGuard</span></div>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggleBtn" title="Toggle Theme Matrix">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+                </button>
+                {% if request.user.is_authenticated %}
+                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Hi, {{ request.user.username }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <span class="agency-brand">FieldGuard Workspace Console</span>
+                <span>&copy; 2026 Northern Water Works Development Agency</span>
+            </div>
+            <div class="footer-right">
+                <div class="telemetry-status">
+                    <span class="pulse-dot"></span>
+                    <span>Secure Gateway Online</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const rootElement = document.documentElement;
+
+        // Immediately check local storage to prevent visual flash on heavy load routines
+        const storedTheme = localStorage.getItem('fieldguard-theme') || 'dark';
+        rootElement.setAttribute('data-theme', storedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = rootElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            rootElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('fieldguard-theme', targetTheme);
+        });
+    </script>
+</body>
+</html>
