@@ -1,10 +1,11 @@
 #!/bin/bash
+
 echo "==> Starting Vercel Build Process"
 
-# Install requirements
-python3 -m pip install -r requirements.txt
+# Install your dependencies using the flag required by Vercel's newer python image
+pip install -r requirements.txt --break-system-packages
 
-# Collect static files safely without interactive prompts
-python3 manage.py collectstatic --noinput --clear
+# Run your static collection rules directly from the root
+python3 manage.py collectstatic --noinput
 
 echo "==> Build Completed Successfully"
